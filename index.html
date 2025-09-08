@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+        <title>AR動画再生テスト</title>
+
+        <!-- ライブラリの読み込み -->
+        <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+        <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+        <script src="https://rawgit.com/donmccurdy/aframe-extras/master/dist/aframe-extras.loaders.min.js"></script>
+        <script src="https://unpkg.com/aframe-chromakey-material/dist/aframe-chromakey-material.min.js"></script>
+
+        <script>
+        AFRAME.registerComponent("play-video", {
+            schema: {
+            video: { type: "string" },
+            canstop: { type: "bool" },
+            },
+            init: function () {
+            this.v = document.querySelector(this.data.video);
+
+            this.el.setAttribute("class", "cantap");
+            this.el.setAttribute("material", {
+                src: this.v,
+                shader: "chromakey",
+                // colorにはクロマキーの色を指定
+                // color: "",
+                side: "double",
+            });
+
+            this.playing = false;
+            this.playstart = this.playstart.bind(this);
+
+            // ビデオを再生するイベントを設定　
+            // 以下はAR.jsでマーカーが読み込まれた時(markerFound)と
+            // 動画オブジェクトがクリックされた時に再生するように設定している
+            window.addEventListener("markerFound", (event) => {
+                this.playstart();
+            });
+            this.el.addEventListener("click", this.playstart);
+            },
+
+            playstart: function () {
+            if (!this.playing) {
+                this.v.play();
+                this.playing = true;
+            } else if (this.data.canstop) {
+                this.v.pause();
+                this.playing = false;
+            }
+            },
+        });
+        </script>
+    </head>
+
+    <body>
+        <a-scene
+        vr-mode-ui="enabled: false;"
+        renderer="logarithmicDepthBuffer: true; gammaOutput: true;"
+        embedded
+        arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: true;"
+        >
+        <a-assets>
+            <video
+            id="myvideo"
+            muted
+            playsinline
+            crossorigin="anonymous"
+            loop="true"
+            src="./video.mp4"
+            ></video>
+        </a-assets>
+
+        <a-marker type='pattern' url='./logo.patt' id="marker">
+            <a-entity
+            play-video="video: #myvideo; canstop: false;"
+            geometry="primitive: plane;"
+            scale="1 1 1"
+            position="0 0 0"
+            width="4"
+            height="3"
+            ></a-entity>
+        </a-marker>
+
+        <a-light type="ambient" color="#ffffff"></a-light>
+
+        <a-entity
+            camera=""
+            position=""
+            rotation=""
+            scale=""
+            visible=""
+        ></a-entity>
+        </a-scene>
+    </body>
+</html>

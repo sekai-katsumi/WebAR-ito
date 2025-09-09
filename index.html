@@ -73,14 +73,16 @@
             ></video>
         </a-assets>
 
-        <a-marker type='pattern' url='./logo.patt' id="marker">
+        <a-marker
+            type="pattern" 
+            url="./marker.patt" 
+            id="marker"
+        >
             <a-entity
-            play-video="video: #myvideo; canstop: false;"
-            geometry="primitive: plane;"
-            scale="1 1 1"
-            position="0 0 0"
-            width="4"
-            height="3"
+                play-video="video: #myvideo; canstop: false;"
+                geometry="primitive: plane; width: 1; height: 0.75"
+                scale="1 1 1"
+                position="1 0 0"
             ></a-entity>
         </a-marker>
 
